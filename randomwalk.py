@@ -97,6 +97,9 @@ def diameter(T):
     # por isso return T.V[b].d
     return T.V[b].d
 
+def testDiameter():
+    print("TODO")
+
 def randomwalk(n):
     G = Graph([Vertex(float('inf'), None, 'branco', False) for i in range(n)], [[] for i in range(n)], n)
     
@@ -114,19 +117,125 @@ def randomwalk(n):
     
     return G
 
+# Funciona no bfs mas nao tem peso
+# def createCompleteGraph(n):
+#     G = Graph([Vertex(float('inf'), None, 'branco', False) for i in range(n)], [[] for i in range(n)], n)
+#     for i in range(n):
+#         for j in range(n):
+#             if i != j:
+#                 G.Adj[i].append(j)
+    
+#     return G
+
+# def testCompleteGraph():
+#     assert createCompleteGraph(0).Adj == []
+#     assert createCompleteGraph(1).Adj == [[]]
+#     assert createCompleteGraph(2).Adj == [[1], [0]]
+#     assert createCompleteGraph(3).Adj == [[1, 2], [0, 2], [0, 1]]
+#     assert createCompleteGraph(4).Adj == [[1, 2, 3], [0, 2, 3], [0, 1, 3], [0, 1, 2]]
+#     assert createCompleteGraph(5).Adj == [[1, 2, 3, 4], [0, 2, 3, 4], [0, 1, 3, 4], [0, 1, 2, 4], [0, 1, 2, 3]]
+
+# bfs nao compativel com isso
+def createCompleteGraph(n):
+    G = Graph([Vertex(float('inf'), None, 'branco', False) for i in range(n)], [], n)
+    for i in range(n):
+        for j in range(i+1, n):
+            G.Adj.append([i, j, 0])
+    
+    return G
+
+def testCompleteGraph():
+    assert createCompleteGraph(0).Adj == []
+    assert createCompleteGraph(1).Adj == []
+    assert createCompleteGraph(2).Adj == [[0, 1, 0]]
+    assert createCompleteGraph(3).Adj == [[0, 1, 0], [0, 2, 0], [1, 2, 0]]
+    assert createCompleteGraph(4).Adj == [[0, 1, 0], [0, 2, 0], [0, 3, 0], [1, 2, 0], [1, 3, 0], [2, 3, 0]]
+    assert createCompleteGraph(5).Adj == [[0, 1, 0], [0, 2, 0], [0, 3, 0], [0, 4, 0], 
+                                          [1, 2, 0], [1, 3, 0], [1, 4, 0], [2, 3, 0], [2, 4, 0], [3, 4, 0]]
+
+def findSet(v, sets):
+    for i in sets:
+        if v in i:
+            return i;
+
+def uniaoFlasco(setU, setV, sets):
+    sets.remove(setU)
+    sets.remove(setV)
+    setU = setU.union(setV)
+    sets.append(setU)
+
+# Graph -> [[Tuplas de arestas], W total]
+def MSTKruskal(adj, sets):
+    A = []
+    E = adj
+    W = 0
+    E.sort(key=lambda x : x[2])
+    for (u, v, w) in E:
+        setU = findSet(u, sets)
+        setV = findSet(v, sets)
+        if setU != setV:
+            A.append((u, v))
+            W += w
+            uniaoFlasco(setU, setV, sets)
+    return A
+
+def randomkruskal(n):
+    G = createCompleteGraph(n)
+    for i in G.Adj:
+            i[2] = randint(0, 1)
+    sets = []
+    G.Adj = MSTKruskal(G.Adj, sets)
+    return G
+
+def runAsserts():
+    testBfs()
+    testDiameter()
+    testCompleteGraph()
+
 def main():
     entradas = [250, 500, 750, 1000, 1250, 1500, 1750, 2000]
     
-    f = open("randomwalk.txt", "w")
-    # testBfs()
-    for i in entradas:
-        media = 0
-        for j in range(500):
-            media += diameter(randomwalk(i))
-        f.write(str(i) + " {0:.3f}".format(media/500.00) + "\n")
-    f.close()
+    opt = ""
+    while(opt != "5"):
+        print("----- MENU -----")
+        print("1 - Random Walk ")
+        print("2 - Kruskal TODO")
+        print("3 - Prim    TODO")
+        print("4 - Run Asserts ")
+        print("5 - Exit        ")
+        opt = input()
+        if opt == "1":
+            f = open("randomwalk.txt", "w")
+            for i in entradas:
+                media = 0
+                for j in range(500):
+                    media += diameter(randomwalk(i))
+                f.write(str(i) + " {0:.3f}".format(media/500.00) + "\n")
+            f.close()
+        elif opt == "2":
+            # not working
+            # bfs não é compativel com a lista de adjacencia implementada em createCompleteGraph()
+            print("Running Kruskal's Algorithm")
+            f = open("randomkruskal.txt", "w")
+            for i in entradas:
+                media = 0
+                for j in range(500):
+                    media += diameter(randomkruskal(i))
+                f.write(str(i) + " {0:.3f}".format(media/500.00) + "\n")
+            f.close()
+            print("TODO")
+        elif opt == "3":
+            print("Running Prim's Algorithm")
+            print("TODO")
+        elif opt == "4":
+            print("Running Asserts")
+            print("")
+            runAsserts()
+        elif opt == "5":
+            print("さよなら")
+        else:
+            print("Opcao nao suportada")
             
-
 
 if __name__ == "__main__":
     main()
