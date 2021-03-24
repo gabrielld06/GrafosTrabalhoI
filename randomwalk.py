@@ -1,9 +1,14 @@
-# -*- coding: utf-8 -*-
 """
-Created on Tue Mar 16 21:00:37 2021
+TODO LIST
 
-@author: Gabriel
+ARRUMAR AS FUNÇÕES DE TESTE
+LIMPAR O CODIGO
+IMPLEMENTAR UMA ESTRUTURA DECENTE QUE CONSIDERE O PESO DA ARESTA (TESTAR O METODO DE TUPLAS SEPARADA DA ADJ)
+IMPLEMENTAR O KRUSKAL
+IMPLEMENTAR O PRIM
+
 """
+
 from random import randint
 
 class Graph:
@@ -18,25 +23,6 @@ class Vertex:
     self.pai = pai
     self.cor = cor
     self.visitado = visitado
-
-# Crie um grafo G com n vértices
-# 2 for each vertex u ∈ G.V
-# 3 u.visitado = False
-# 4 u = um vértice qualquer de G.V
-# 5 u.visitado = True
-# 6 while |G.E| < n − 1
-# 7 v = um vértice aleatório de G.V
-# 8 if v.visitado == False
-# 9 Adicione (u, v) em G.E
-# 10 v.visitado = True
-# 11 u = v
-# 12 return G
-
-# Diameter(T )
-# 1 s = vértice qualquer de T .V
-# 2 a = o vértice com valor máximo de d obtido por BFS(T , s)
-# 3 b = o vértice com valor máximo de d obtido por BFS(T , a)
-# 4 return A distância entre a e b
 
 def enqueue(Q,v):
     Q.append(v)
@@ -67,24 +53,56 @@ def bfs(G, s):
         G.V[u].cor = 'preto'
     return maior
 
+# def bfs(G, s): #bfs usando matriz
+    # # maior guarda o indice do vertex com maior D do grafo
+    # maior = s
+    # G.V[s].d = 0
+    # G.V[s].pai = None
+    # G.V[s].cor = 'cinza'
+    # Q = []
+    # enqueue(Q,s)
+    # while(len(Q) != 0):
+        # u = dequeue(Q)
+        # for v in range(len(G.Adj[u])):
+            # if G.Adj[u][v] > 0 and G.V[v].cor == 'branco':
+                # G.V[v].cor = 'cinza'
+                # G.V[v].d = G.V[u].d + 1
+                # if G.V[v].d > G.V[maior].d :
+                    # maior = v
+                # G.V[v].pai = u
+                # enqueue(Q, v)
+        # G.V[u].cor = 'preto'
+    # return maior
+
 def testBfs():
     g = Graph([], [], 5)
 
     g.V = [Vertex(float('inf'), None, 'branco', False) for i in range(5)]
-    g.Adj = [
-          [1, 2],
-          [0, 3],
-          [0, 3],
-          [1, 2],
-          []
-          ]
+    # g.Adj = [
+    #       [1, 2],
+    #       [0, 3],
+    #       [0, 3],
+    #       [1, 2],
+    #       []
+    #       ]
+    
+    # considerei usar matriz de adjancencia para o algoritmo de kruskal e prim
+    # já que no começo é usado grafos completos e tbm resolveria o problema do peso da aresta
+    # mas ao final da execução, ela não é mais tão interessante
+    
+    g.Adj = [ 
+      [0, 1, 1, -1, -1],
+      [1, 0, -1, 1, -1],
+      [1, -1, 0, 1, -1],
+      [-1, 1, 1, 0, -1],
+      [-1, -1, -1, -1, 0],
+      ]
     bfs(g, 0)
     assert g.V[0].d == 0
     assert g.V[1].d == 1
     assert g.V[2].d == 1
     assert g.V[3].d == 2
     assert g.V[4].d == float('inf')
-    
 
 def diameter(T):
     # s recebe vertice qualquer de T
@@ -98,8 +116,20 @@ def diameter(T):
     return T.V[b].d
 
 def testDiameter():
-    print("TODO")
-
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[3], [2], [3, 1], [0, 4, 2], [3]], 5)) == 3
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[4, 2], [4], [0, 3], [2], [0, 1]], 5)) == 4
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[2], [4], [0, 3, 4], [2], [2, 1]], 5)) == 3
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[1, 4], [0], [4, 3], [2], [0, 2]], 5)) == 4
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[4, 3, 2], [4], [0], [0], [0, 1]], 5)) == 3
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[3, 1], [0, 4], [3], [0, 2], [1]], 5)) == 4
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[4], [2, 3], [4, 1], [1], [0, 2]], 5)) == 4
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[2, 1, 4], [0], [0, 3], [2], [0]], 5)) == 3
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[3], [4], [3], [0, 2, 4], [3, 1]], 5)) == 3
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(5)], [[1, 3], [0, 2], [1], [0, 4], [3]], 5)) == 4
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(6)], [[2], [2], [0, 1, 3], [2, 4], [3, 5], [4]], 6)) == 4
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(6)], [[4], [5], [4, 3, 5], [2], [0, 2], [2, 1]], 6)) == 4
+    assert diameter(Graph([Vertex(float('inf'), None, 'branco', False) for i in range(4)], [[1], [0, 2], [1, 3], [2]], 4)) == 3
+    
 def randomwalk(n):
     G = Graph([Vertex(float('inf'), None, 'branco', False) for i in range(n)], [[] for i in range(n)], n)
     
@@ -188,13 +218,20 @@ def randomkruskal(n):
     return G
 
 def runAsserts():
-    testBfs()
+    #testBfs()
     testDiameter()
-    testCompleteGraph()
+   # testCompleteGraph()
+   
+def criarArvores():
+    f = open("arvores.txt", "w")
+    for i in range(5):
+        arvore = randomwalk(i+3)
+        f.write("{} == {}".format(arvore.Adj, diameter(arvore)) + "\n")
+    f.close()
 
 def main():
     entradas = [250, 500, 750, 1000, 1250, 1500, 1750, 2000]
-    
+    criarArvores()
     opt = ""
     while(opt != "5"):
         print("----- MENU -----")
