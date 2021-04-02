@@ -1,15 +1,7 @@
-"""
-
-*** ESTE SERÁ O ARQUIVO QUE SERÁ ENVIADO NA PRIMERIA PARTE ***
-
-TODO LIST:
-ADEQUAR OS COMENTARIOS (ver ultimo video do professor)
-CHECKUP FINAL
-"""
 from collections import deque
 
 
-#Estrutura para guardar um grafo, contendo uma lista de vertices, de adj e a quantidade de vertices 
+#Estrutura para guardar um grafo, contendo uma lista de vertices, de adj e a quantidade de vertices
 class Graph:
   def __init__(self, v, adj, vertexNumber):
     self.v = v
@@ -67,7 +59,7 @@ def testBfs():
           [3],
           [1]
           ]
-    
+
     bfs(g, 0)
     assert g.v[0].d == 0
     assert g.v[1].d == 1
@@ -110,7 +102,7 @@ def testBfs():
     assert g2.v[5].d == 2
     assert g2.v[6].d == float('inf')
     
-#A funcao diameter calcula o diametro da arvore T     
+#A funcao diameter calcula o diametro da arvore T
 def diameter(T):
     # s recebe vertice qualquer de T
     s = 0 
