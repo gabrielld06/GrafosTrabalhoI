@@ -5,27 +5,35 @@
 TODO LIST:
 ADEQUAR OS COMENTARIOS (ver ultimo video do professor)
 CHECKUP FINAL
-
 """
 from collections import deque
 
+
+#Estrutura para guardar um grafo, contendo uma lista de vertices, de adj e a quantidade de vertices 
 class Graph:
   def __init__(self, v, adj, vertexNumber):
     self.v = v
     self.adj = adj
     self.vertexNumber = vertexNumber
 
+#Estrutura para guardar as atributos de um vertice, distancia e cor
 class vertex:
   def __init__(self, d, cor):
     self.d = d
     self.cor = cor
 
+#A funcao enqueue enfileira o elemento v na fila Q, tal procedimento feito em tempo linear
 def enqueue(Q,v):
     Q.append(v)
-    
-def dequeue(Q):
-    return Q.popleft()
 
+#A funcao dequeue retira o elemento mais a esquerda da fila e o retorna, caso a fila não seja vazia
+def dequeue(Q):
+    if len(Q) != 0:
+        return Q.popleft()
+
+#A funcao bfs, realiza a busca em largura no grafo G, comecando pelo vertice s. Ao final o atributo
+#d de cada vertice sera equivalente a menor distancia em relacao a s e a funcao retornara o vertice com 
+#a maior distancia calculada.
 def bfs(G, s):
     # maior guarda o indice do vertex com maior D do grafo até o momento
     maior = s
@@ -45,6 +53,7 @@ def bfs(G, s):
         G.v[u].cor = 'preto'
     return maior
 
+#A funcao testeBfs realiza os testes automatizados do bfs
 def testBfs():
     g = Graph([], [], 7)
 
@@ -101,10 +110,10 @@ def testBfs():
     assert g2.v[5].d == 2
     assert g2.v[6].d == float('inf')
     
-    
+#A funcao diameter calcula o diametro da arvore T     
 def diameter(T):
     # s recebe vertice qualquer de T
-    s = 0
+    s = 0 
     a = bfs(T, s)
     # reset dos atributos para que um novo bfs seja feito
     T.v = [vertex(float('inf'), 'branco') for i in range(T.vertexNumber)]
@@ -113,7 +122,8 @@ def diameter(T):
     # por isso return T.v[b].d
     return T.v[b].d
 
-def testDiameter():
+#A funcao testDiameter realiza os testes automatizados da funcao diameter 
+def testDiameter(): 
     assert diameter(Graph([vertex(float('inf'), 'branco') for i in range(1)], [[]], 1)) == 0
     assert diameter(Graph([vertex(float('inf'), 'branco') for i in range(2)], [[1], [0]], 2)) == 1
     assert diameter(Graph([vertex(float('inf'), 'branco') for i in range(3)], [[1], [0, 2], [1]], 3)) == 2
@@ -122,10 +132,12 @@ def testDiameter():
     assert diameter(Graph([vertex(float('inf'), 'branco') for i in range(6)], [[2], [2, 4, 5], [0, 1], [5], [1], [1, 3]], 6)) == 4
     assert diameter(Graph([vertex(float('inf'), 'branco') for i in range(7)], [[1], [0, 6, 5], [5, 3], [2], [6], [1, 2], [1, 4]], 7)) == 5
 
+#A funcao runAsserts faz a chamada das funcoes que realizam os testes automatizados
 def runAsserts():
     testBfs()
     testDiameter()
 
+#Um menu com as opcoes de interacao com o usuario, a opcao 4 executa os asserts para a funcao diameter 
 def main():    
     opt = ""
     while(opt != "5"):
