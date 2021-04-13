@@ -5,17 +5,17 @@ from random import randint
 
 #Estrutura para guardar um grafo, contendo uma lista de vertices, de adj e a quantidade de vertices
 class Graph:
-  def __init__(self, v, adj, vertexNumber):
-    self.v = v
-    self.adj = adj
-    self.vertexNumber = vertexNumber
+    def __init__(self, v, adj, vertexNumber):
+        self.v = v
+        self.adj = adj
+        self.vertexNumber = vertexNumber
 
 #Estrutura para guardar as atributos de um vertice, distancia e cor
 class vertex:
-  def __init__(self, d, cor, visitado):
-    self.d = d
-    self.cor = cor
-    self.visitado = visitado
+    def __init__(self, d, cor, visitado):
+        self.d = d
+        self.cor = cor
+        self.visitado = visitado
 
 #A funcao enqueue enfileira o elemento v na fila Q, tal procedimento feito em tempo linear
 def enqueue(Q,v):

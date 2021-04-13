@@ -2,22 +2,27 @@
 # José Rafael Silva Hermoso RA112685
 from collections import deque
 from random import randint
+from time import time
 
 #Estrutura para guardar um grafo, contendo uma lista de vertices, de adj e a quantidade de vertices
 class Graph:
-  def __init__(self, v, adj, vertexNumber):
-    self.v = v
-    self.adj = adj
-    self.vertexNumber = vertexNumber
+    def __init__(self, v, adj, vertexNumber):
+        self.v = v
+        self.adj = adj
+        self.vertexNumber = vertexNumber
+    
+    def add_weighted_edge(self, u, v, w):
+        self.adj[u].append(v, w)
+        self.adj[v].append(u, w)
 
 #Estrutura para guardar as atributos de um vertice, distancia e cor
 class Vertex:
-  def __init__(self, d, cor, visitado):
-    self.d = d
-    self.cor = cor
-    self.visitado = visitado
-    self.p = self
-    self.rank = 0
+    def __init__(self, d, cor, visitado):
+        self.d = d
+        self.cor = cor
+        self.visitado = visitado
+        self.p = self
+        self.rank = 0
 
 #A funcao enqueue enfileira o elemento v na fila Q, tal procedimento feito em tempo linear
 def enqueue(Q,v):
@@ -174,6 +179,34 @@ def randomwalk(n):
     assert is_tree(G)
     return G
 
+# def counting_sort(E, k):
+#     c = [[] for i in range(k+1)]
+#     b = []
+#     for i in range(len(E)):
+#         c[E[i][2]].append(E[i])
+    
+#     for i in c:
+#         for j in i:
+#             b.append(j)
+    
+#     return b
+
+# assert counting_sort([(0, 0, 2), 
+#                       (0, 0, 5), 
+#                       (0, 0, 3), 
+#                       (0, 0, 0), 
+#                       (0, 0, 2), 
+#                       (0, 0, 3), 
+#                       (0, 0, 0), 
+#                       (0, 0, 3)], 5) == [(0, 0, 0), 
+#                                           (0, 0, 0), 
+#                                           (0, 0, 2), 
+#                                           (0, 0, 2), 
+#                                           (0, 0, 3), 
+#                                           (0, 0, 3), 
+#                                           (0, 0, 3), 
+#                                           (0, 0, 5)]
+
 def make_set(x):
     x.p = x
     x.rank = 0
@@ -199,17 +232,13 @@ def MSTKruskal(G, W):
     A = [[] for i in range(G.vertexNumber)]
     #for i in G.v:
      #   make_set(i)
-    
-    # krl essa porra mt feio bixo e quadratico
-    visitados = []
+     
     E = []
     for i in range(len(G.adj)):
-        for j in range(len(G.adj[i])):
-            if (j, i) not in visitados:
-                visitados.append((i, j))
-                E.append((i, j, G.adj[i][j]))
+        for j in range(i+1, len(G.adj[i])):
+            E.append((i, j, G.adj[i][j]))
     E.sort(key=lambda x : x[2])
-    
+    #E = counting_sort(E, 1)
     for (u, v, w) in E:
         if find_set(G.v[u]) != find_set(G.v[v]):
             A[u].append(v)
@@ -239,20 +268,15 @@ def MSTKruskal(G, W):
 #     print(string)
 
 def randomkruskal(n):
-    G = Graph([Vertex(float('inf'), 'branco', False) for i in range(n)], [], n)
-    assigned = []
+    G = Graph([Vertex(float('inf'), 'branco', False) for i in range(n)], [[float('inf') for i in range(n)] for i in range(n)], n)
     for i in range(n):
-        G.adj.append([])
-        for j in range(n):
-            if (j, i) not in assigned:
-                G.adj[i].append(randint(0, 1))
-                assigned.append((i, j))
-                if i == j: 
-                    G.adj[i][j] = float('inf')
-            else:
-                G.adj[i].append(G.adj[j][i])
+        for j in range(i+1, n):
+            num = randint(0, 1)
+            G.adj[i][j] = num
+            G.adj[j][i] = num
     w = 0
     G.adj = MSTKruskal(G, w)
+    assert is_tree(G)
     return G
 
 assert is_tree(randomkruskal(10))
@@ -278,15 +302,31 @@ def main():
         if opt == "1":
             print("Executando Random Walk")
             f = open("randomwalk.txt", "w")
+            tempo_total = time()
             for i in entradas:
                 media = 0
+                tempo_atual = time()
                 for j in range(500):
                     media += diameter(randomwalk(i))
+                print("N = ", i, " finalizado em ", time() - tempo_atual)
                 f.write(str(i) + " {0:.3f}".format(media/500.00) + "\n")
+            print("Random walk finalizado em ", time() - tempo_total)
             f.close()
         elif opt == "2":
             print("Executando Algoritimo de Kruskal")
-            print("")
+            f = open("randomkruskal.txt", "w")
+            tempo_total = time()
+            for i in entradas:
+                print("Executando ", i)
+                media = 0
+                tempo_atual = time()
+                for j in range(500):
+                    media += diameter(randomkruskal(i))
+                    #print((100*j)/500, "%")
+                print("N = ", i, " finalizado em ", time() - tempo_atual)
+                f.write(str(i) + " {0:.3f}".format(media/500.00) + "\n")
+            print("Kruskal finalizado em ", time() - tempo_total)
+            f.close()
         elif opt == "3":
             print("Executando Algoritimo de Prim")
             print("")
