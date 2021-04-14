@@ -123,12 +123,14 @@ def testDiameter():
     assert diameter(Graph([], [[2], [2, 4, 5], [0, 1], [5], [1], [1, 3]], 6)) == 4
     assert diameter(Graph([], [[1], [0, 6, 5], [5, 3], [2], [6], [1, 2], [1, 4]], 7)) == 5
 
+#A funcao is_tree verifica se o grafo G é uma arvore, checando se o grafo possui ciclos e é conexo
 def is_tree(G):
     global verticesVisitados
     G.v = [vertex(float('inf'), 'branco', False) for i in range(G.vertexNumber)]
     verticesVisitados = 0
     return True if DFSVisit(G, 0) and verticesVisitados == G.vertexNumber else False
-    
+
+#O DFSVisit é uma funcao auxiliar de is_tree responsavel por visitar os vertices do grafo, retornando False se encontrar um ciclo ou True caso nao encontre
 def DFSVisit(G, u):
     global verticesVisitados
     G.v[u].cor = "cinza"
@@ -154,6 +156,7 @@ def testIs_tree():
     assert not is_tree(Graph([], [[1, 2], [0], [0, 3], [2, 4, 5], [3, 5, 6, 7], [3, 4, 6], [4, 5, 7], [6, 4]], 8))
     assert not is_tree(Graph([], [[1, 3], [4], [4, 5], [1], [3], [5]], 6))
 
+#A funcao randomwalk cria um grafo com N vertices e adiciona elementos em sua lista de adj. Tal grafo sera testado se atende as propriedades de ser uma arvore
 def randomwalk(n):
     G = Graph([vertex(float('inf'), 'branco', False) for i in range(n)], [[] for i in range(n)], n)
     
