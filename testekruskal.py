@@ -1,7 +1,7 @@
 # Gabriel Lima Dias RA115892
 # José Rafael Silva Hermoso RA112685
 from collections import deque
-from random import randint
+from random import randint, random
 from time import time
 
 #Estrutura para guardar um grafo, contendo uma lista de vertices, de adj e a quantidade de vertices
@@ -12,8 +12,13 @@ class Graph:
         self.vertexNumber = vertexNumber
     
     def add_weighted_edge(self, u, v, w):
-        self.adj[u].append(v, w)
-        self.adj[v].append(u, w)
+        self.adj.append((u, v, w))
+    
+    def create_complete_graph(self):
+        for i in range(self.vertexNumber):
+            for j in range(i+1, self.vertexNumber):
+                num = random()
+                self.add_weighted_edge(i, j, num)
 
 #Estrutura para guardar as atributos de um vertice, distancia e cor
 class Vertex:
@@ -230,22 +235,23 @@ def find_set(x):
 # Graph -> [[Tuplas de arestas], W total]
 def MSTKruskal(G, W):
     A = [[] for i in range(G.vertexNumber)]
-    #for i in G.v:
-     #   make_set(i)
+    for i in G.v:
+        make_set(i)
      
     E = []
-    for i in range(len(G.adj)):
-        for j in range(i+1, len(G.adj[i])):
-            E.append((i, j, G.adj[i][j]))
+    for i in G.adj:
+        E.append(i)
     E.sort(key=lambda x : x[2])
     #E = counting_sort(E, 1)
+    numArestas = 0
     for (u, v, w) in E:
         if find_set(G.v[u]) != find_set(G.v[v]):
             A[u].append(v)
             A[v].append(u)
             W += w
             union(G.v[u], G.v[v])
-    return A
+            numArestas += 1
+    return A, numArestas
 
 # alf = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
 
@@ -268,14 +274,11 @@ def MSTKruskal(G, W):
 #     print(string)
 
 def randomkruskal(n):
-    G = Graph([Vertex(float('inf'), 'branco', False) for i in range(n)], [[float('inf') for i in range(n)] for i in range(n)], n)
-    for i in range(n):
-        for j in range(i+1, n):
-            num = randint(0, 1)
-            G.adj[i][j] = num
-            G.adj[j][i] = num
+    G = Graph([Vertex(float('inf'), 'branco', False) for i in range(n)], [], n)
+    G.create_complete_graph()
     w = 0
-    G.adj = MSTKruskal(G, w)
+    G.adj, numArestas = MSTKruskal(G, w)
+    #print(numArestas)
     assert is_tree(G)
     return G
 
@@ -321,7 +324,8 @@ def main():
                 media = 0
                 tempo_atual = time()
                 for j in range(500):
-                    media += diameter(randomkruskal(i))
+                    aaaa = diameter(randomkruskal(i))
+                    media += aaaa
                     #print((100*j)/500, "%")
                 print("N = ", i, " finalizado em ", time() - tempo_atual)
                 f.write(str(i) + " {0:.3f}".format(media/500.00) + "\n")
