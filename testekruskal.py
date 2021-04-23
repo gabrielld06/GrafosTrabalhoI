@@ -17,8 +17,8 @@ class Graph:
     def create_complete_graph(self):
         for i in range(self.vertexNumber):
             for j in range(i+1, self.vertexNumber):
-                num = random()
-                self.add_weighted_edge(i, j, num)
+                #self.add_weighted_edge(i, j, random())
+                self.adj.append((i, j, random()))
 
 #Estrutura para guardar as atributos de um vertice, distancia e cor
 class Vertex:
@@ -184,40 +184,12 @@ def randomwalk(n):
     assert is_tree(G)
     return G
 
-# def counting_sort(E, k):
-#     c = [[] for i in range(k+1)]
-#     b = []
-#     for i in range(len(E)):
-#         c[E[i][2]].append(E[i])
-    
-#     for i in c:
-#         for j in i:
-#             b.append(j)
-    
-#     return b
-
-# assert counting_sort([(0, 0, 2), 
-#                       (0, 0, 5), 
-#                       (0, 0, 3), 
-#                       (0, 0, 0), 
-#                       (0, 0, 2), 
-#                       (0, 0, 3), 
-#                       (0, 0, 0), 
-#                       (0, 0, 3)], 5) == [(0, 0, 0), 
-#                                           (0, 0, 0), 
-#                                           (0, 0, 2), 
-#                                           (0, 0, 2), 
-#                                           (0, 0, 3), 
-#                                           (0, 0, 3), 
-#                                           (0, 0, 3), 
-#                                           (0, 0, 5)]
-
 def make_set(x):
     x.p = x
     x.rank = 0
 
 def union(x, y):
-    link(find_set(x), find_set(y))
+    link(x, y)
 
 def link(x, y):
     if x.rank > y.rank:
@@ -232,53 +204,28 @@ def find_set(x):
         x.p = find_set(x.p)
     return x.p
 
-# Graph -> [[Tuplas de arestas], W total]
-def MSTKruskal(G, W):
+def MSTKruskal(G):
     A = [[] for i in range(G.vertexNumber)]
-    for i in G.v:
-        make_set(i)
-     
-    E = []
-    for i in G.adj:
-        E.append(i)
-    E.sort(key=lambda x : x[2])
-    #E = counting_sort(E, 1)
+
+    E = sorted(G.adj, key=lambda x : x[2])
     numArestas = 0
-    for (u, v, w) in E:
-        if find_set(G.v[u]) != find_set(G.v[v]):
+    i = 0
+    while numArestas < G.vertexNumber-1:
+        u,v,w = E[i]
+        i += 1
+        setU = find_set(G.v[u])
+        setV = find_set(G.v[v])
+        if setU != setV:
             A[u].append(v)
             A[v].append(u)
-            W += w
-            union(G.v[u], G.v[v])
+            union(setU, setV)
             numArestas += 1
-    return A, numArestas
-
-# alf = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
-
-# fon = MSTKruskal(Graph([Vertex(float('inf'), 'branco', False) for i in range(9)], [[float('inf'), 4, float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), 8, float('inf')], 
-#                                                                                     [4, float('inf'), 8, float('inf'), float('inf'), float('inf'), float('inf'), 11, float('inf')], 
-#                                                                                     [float('inf'), 8, float('inf'), 7, float('inf'), 4, float('inf'), float('inf'), 2], 
-#                                                                                     [float('inf'), float('inf'), 7, float('inf'), 9, 14, float('inf'), float('inf'), float('inf')],  
-#                                                                                     [float('inf'), float('inf'), float('inf'), 9, float('inf'), 10, float('inf'), float('inf'), float('inf')], 
-#                                                                                     [float('inf'), float('inf'), 4, 14, 10, float('inf'), 2, float('inf'), float('inf')],  
-#                                                                                     [float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), 2, float('inf'), 1, 6], 
-#                                                                                     [8, float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), 1, float('inf'), 7], 
-#                                                                                     [float('inf'), float('inf'), 2, float('inf'), float('inf'), float('inf'), 6, 7, float('inf')]], 9), 0)
-
-# assert is_tree(fon)
-
-# for i in fon.adj:
-#     string = ''
-#     for j in i:
-#         string += alf[j] + ' '
-#     print(string)
+    return A
 
 def randomkruskal(n):
     G = Graph([Vertex(float('inf'), 'branco', False) for i in range(n)], [], n)
     G.create_complete_graph()
-    w = 0
-    G.adj, numArestas = MSTKruskal(G, w)
-    #print(numArestas)
+    G.adj = MSTKruskal(G)
     assert is_tree(G)
     return G
 
